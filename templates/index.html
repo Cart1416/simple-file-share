@@ -4,42 +4,145 @@
   <meta charset="UTF-8">
   <title>Simple File Share</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 40px; }
-    .container { max-width: 500px; margin: auto; }
-    .flash { color: red; margin-bottom: 10px; }
+    body {
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      background: linear-gradient(135deg, #eaf6ff 0%, #cce0f6 100%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      transition: background 0.4s;
+    }
+    .container {
+      background: rgba(255,255,255,0.75);
+      box-shadow: 0 10px 32px 0 rgba(70,120,200,0.18), 0 2px 4px 0 rgba(70,120,200,0.12);
+      border-radius: 15px;
+      max-width: 480px;
+      margin: 48px auto 0 auto;
+      padding: 32px 36px 36px 36px;
+      position: relative;
+      border: 1px solid #cfe4fb;
+      backdrop-filter: blur(4px);
+    }
+    h1 {
+      font-size: 1.65em;
+      font-weight: normal;
+      color: #2172ad;
+      margin-bottom: 14px;
+      text-shadow: 0 1px 0 #fff;
+    }
+    .flash {
+      background: linear-gradient(90deg, #d8eafd 0%, #f7f9fb 100%);
+      color: #ad2a35;
+      border-left: 5px solid #2172ad;
+      padding: 8px 18px;
+      margin-bottom: 20px;
+      border-radius: 0 6px 6px 0;
+      font-size: 1.06em;
+      box-shadow: 0 2px 8px 0 rgba(120,188,255,0.08);
+    }
     .url-row {
       display: flex;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #b7d0ea;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #edfafc 0%, #e3edf6 100%);
+      box-shadow: 0 1.5px 7px 0 rgba(120,188,255,0.09);
+      overflow: hidden;
     }
     .url-label {
-      margin-right: 8px;
-      font-weight: bold;
+      margin-right: 6px;
+      font-weight: 500;
+      color: #2172ad;
+      text-shadow: 0 1px 0 #fff;
+      font-size: 1.05em;
+      display: block;
+      margin-bottom: 6px;
     }
     .address {
-      background: #eee;
-      padding: 0.45em 0.8em;
-      border-radius: 4px 0 0 4px;
-      border: 1px solid #ccc;
-      border-right: 0;
-      font-family: monospace;
-      min-width: 13em;
+      background: rgba(225,236,245,0.8);
+      padding: 0.6em 1em;
+      border: none;
+      font-family: 'Consolas', 'monospace';
+      color: #2172ad;
+      font-size: 1em;
+      min-width: 10em;
+      font-weight: 500;
+      /* Aero-style inset */
+      box-shadow: inset 2px 3px 6px 0 rgba(120,188,255,0.175);
+      border-right: 1px solid #b7d0ea;
     }
     .url-input {
-      border-radius: 0 4px 4px 0;
-      border: 1px solid #ccc;
-      border-left: 0;
-      padding: 0.45em;
+      border: none;
+      outline: none;
+      padding: 0.6em;
+      font-size: 1em;
+      background: rgba(245,248,251,0.85);
+      color: #14699d;
+      font-family: 'Consolas', 'monospace';
+      border-left: 1px solid #b7d0ea;
+      box-shadow: inset 2px 3px 6px 0 rgba(120,188,255,0.09);
+      width: 100%;
+      transition: background 0.15s, box-shadow 0.2s;
+      border-radius: 0 8px 8px 0;
+    }
+    .url-input:focus {
+      background: #e0f4ff;
+      box-shadow: 0 0 0 2px #8acded;
+    }
+    label[for="file"] {
+      font-weight: 500;
+      margin-top: 18px;
+      display: block;
+      color: #2172ad;
+    }
+    input[type="file"] {
+      margin: 7px 0 14px 0;
+      font-size: 1.02em;
+    }
+    input[type="submit"] {
+      background: linear-gradient(180deg, #eaf6ff 0%, #bae3ff 100%);
+      color: #2172ad;
+      border: 1px solid #b7d0ea;
+      border-radius: 7px;
+      font-size: 1.09em;
+      padding: 0.45em 1.5em;
+      cursor: pointer;
+      box-shadow: 0 2px 8px 0 rgba(70,120,200,0.13);
+      font-weight: bold;
+      letter-spacing: .02em;
+      transition: background 0.2s, box-shadow 0.15s;
+    }
+    input[type="submit"]:hover, input[type="submit"]:active {
+      background: linear-gradient(180deg, #daf3fb 0%, #b6e1ff 100%);
+      box-shadow: 0 2px 12px 0 rgba(70,120,200,0.18);
     }
     .preview-link {
-      margin-top: 0.7em;
-      font-size: 1.03em;
-      font-family: monospace;
-      background: #f7f7f7;
-      padding: 0.3em 0.5em;
-      border-radius: 5px;
+      margin-top: 1em;
+      font-size: 1.09em;
+      font-family: 'Consolas', 'monospace';
+      background: rgba(243,250,255,0.87);
+      color: #2172ad;
+      padding: 0.44em 0.79em;
+      border-radius: 7px;
+      box-shadow: 0 1px 6px 0 rgba(70,120,200,0.07);
       display: block;
       width: fit-content;
+      border: 1px solid #b7d0ea;
+    }
+    @media (max-width: 600px) {
+      .container {
+        max-width: 98vw;
+        margin-top: 7vw;
+        padding: 18px 6vw;
+      }
+      .preview-link {
+        font-size: 1em;
+        padding: 0.38em 0.7em;
+      }
+      h1 {
+        font-size: 1.22em;
+      }
     }
   </style>
 </head>
