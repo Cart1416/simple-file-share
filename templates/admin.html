@@ -1,0 +1,143 @@
+{% if mode == "login" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Login</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    .container { max-width: 400px; margin: auto; }
+    .flash { color: red; margin-bottom: 1em; }
+    .success { color: green; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Admin Login</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash">
+        {% for cat, msg in messages %}
+          <div class="{{cat}}">{{ msg }}</div>
+        {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    <form method="post">
+      <label for="password">Admin password: (default is 1234)</label>
+      <input type="password" id="password" name="password" required>
+      <input type="submit" value="Login">
+    </form>
+  </div>
+</body>
+</html>
+{% elif mode == "dashboard" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px; }
+    .container { max-width: 900px; margin: auto; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { padding: 10px; border: 1px solid #aaa; }
+    th { background: #ececec; }
+    form.inline { display: inline; }
+    .flash { color: red; margin-bottom: 1em; }
+    .success { color: green; }
+    a { text-decoration: underline; }
+    .op-buttons { min-width: 180px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Admin Dashboard</h1>
+    <a href="{{url_for('admin_config')}}">Change admin password and settings</a> &middot; 
+    <a href="{{url_for('admin_logout')}}">Logout</a>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash">
+        {% for cat, msg in messages %}
+          <div class="{{cat}}">{{ msg }}</div>
+        {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    <h2>All Files & Links</h2>
+    <table>
+      <tr>
+        <th>Download Link</th>
+        <th>Original Filename</th>
+        <th>Downloads</th>
+        <th class="op-buttons">Operations</th>
+      </tr>
+      {% for f in files %}
+      <tr>
+        <td>
+          <a href="{{ f.url }}" target="_blank">{{ request.url_root[:-1] + f.url }}</a>
+        </td>
+        <td>{{ f.original_filename }}</td>
+        <td>{{ f.downloads if f.downloads is defined else 0 }}</td>
+        <td>
+          <a href="{{ url_for('get_file', custom_url=f.custom_url) }}">Download</a>
+          &middot;
+          <form class="inline" method="post" action="{{ url_for('admin_rename', custom_url=f.custom_url) }}" style="display:inline;">
+            <input type="text" name="new_url" placeholder="rename link" required style="max-width:100px;">
+            <input type="submit" value="Rename">
+          </form>
+          &middot;
+          <form class="inline" method="post" action="{{ url_for('admin_delete', custom_url=f.custom_url) }}" style="display:inline;">
+            <input type="submit" value="Delete" onclick="return confirm('Delete this file and link?');">
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</body>
+</html>
+{% elif mode == "config" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Config</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    .container { max-width: 400px; margin: auto; }
+    .flash { color: red; margin-bottom: 1em; }
+    .success { color: green; }
+    label { display: block; margin-top: 0.8em;}
+    input[type=number] { width: 80px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Change Admin Password and Settings</h2>
+    <a href="{{ url_for('admin_dashboard') }}">Back to dashboard</a> &middot;
+    <a href="{{url_for('admin_logout')}}">Logout</a>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div class="flash">
+        {% for cat, msg in messages %}
+          <div class="{{cat}}">{{ msg }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endwith %}
+    <form method="post">
+      <label for="new_pass">New password:</label>
+      <input type="password" name="new_pass" id="new_pass" placeholder="Leave blank to not change">
+      <p><small>Leave blank to not change the password.</small></p>
+      <label for="max_file_size">Max file size (MB):</label>
+      <input type="number" name="max_file_size" id="max_file_size" min="1" value="{{ max_file_size }}">
+      <label for="max_uploads_per_ip">Max file uploads per IP in 24h: (0 to disable uploads)</label>
+      <input type="number" name="max_uploads_per_ip" id="max_uploads_per_ip" min="1" value="{{ max_uploads_per_ip }}">
+      <br><br>
+      <input type="submit" value="Save Settings">
+    </form>
+  </div>
+</body>
+</html>
+{% endif %}

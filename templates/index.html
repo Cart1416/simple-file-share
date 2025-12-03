@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple File Share</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    .container { max-width: 500px; margin: auto; }
+    .flash { color: red; margin-bottom: 10px; }
+    .url-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .url-label {
+      margin-right: 8px;
+      font-weight: bold;
+    }
+    .address {
+      background: #eee;
+      padding: 0.45em 0.8em;
+      border-radius: 4px 0 0 4px;
+      border: 1px solid #ccc;
+      border-right: 0;
+      font-family: monospace;
+      min-width: 13em;
+    }
+    .url-input {
+      border-radius: 0 4px 4px 0;
+      border: 1px solid #ccc;
+      border-left: 0;
+      padding: 0.45em;
+    }
+    .preview-link {
+      margin-top: 0.7em;
+      font-size: 1.03em;
+      font-family: monospace;
+      background: #f7f7f7;
+      padding: 0.3em 0.5em;
+      border-radius: 5px;
+      display: block;
+      width: fit-content;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Upload a File & Choose Your Link</h1>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash">
+          {% for message in messages %}
+            <div>{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    <form method="POST" enctype="multipart/form-data">
+      <label class="url-label" for="custom_url">Your custom file link:</label>
+      <div class="url-row">
+        <span class="address" id="site-address">server</span>
+        <input type="text" id="custom_url" name="custom_url" class="url-input" required placeholder="your-link">
+      </div>
+      <label for="file">Select file to upload:</label><br>
+      <input type="file" id="file" name="file" required><br><br>
+      <input type="submit" value="Upload">
+    </form>
+    <span class="preview-link" id="preview-link"></span>
+  </div>
+  <script>
+    // Get site URL/body and detect custom link live
+    function getSitePrefix() {
+      return window.location.protocol + "//" + window.location.host + "/file/";
+    }
+    document.getElementById("site-address").textContent = getSitePrefix();
+
+    function updatePreview() {
+      var prefix = getSitePrefix();
+      var custom_url = document.getElementById("custom_url").value;
+      var preview = prefix + (custom_url ? custom_url : "<your-custom-url>");
+      document.getElementById("preview-link").textContent = preview;
+    }
+    // Initial preview
+    updatePreview();
+
+    document.getElementById("custom_url").addEventListener("input", updatePreview);
+  </script>
+</body>
+</html>
